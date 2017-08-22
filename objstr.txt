@@ -1,0 +1,1 @@
+O:6:"Person":4:{s:4:"name";s:6:"张三";s:3:"age";i:10;s:3:"sex";s:3:"男";s:4:"marr";a:3:{i:0;s:3:"aaa";i:1;s:3:"bbb";i:2;s:3:"ccc";}}
