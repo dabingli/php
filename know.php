@@ -98,7 +98,7 @@
 
 三、系统函数
 
-	1.系统函数区分文件和目录
+	1.系统函数区分文件和目录opendir readdir is_dir closedir
 
 	$dirname = "../php";
 	function fordir($dirname){
@@ -260,6 +260,12 @@
 					echo $os."<br>";
 					echo $webserver."<br>";
 
+					//如果键值是关联数组的则重新排序
+					$arr = [0=>"linux", 5=>"php","linux","php", "mysql"];
+					print_r($arr); //Array ( [0] => linux [5] => php [6] => linux [7] => php [8] => mysql ) 
+					echo "<br>";
+					print_r(array_values($arr)); //Array ( [0] => linux [1] => php [2] => linux [3] => php [4] => mysql )
+
 
 			array_keys  返回数组的下标
 
@@ -269,9 +275,296 @@
 				array_keys($arr, "Apache") 	//webserver, webse
 				array_keys($arr, "Apache", true) 	//webserver
 
+			in_array  检查数组中是否存在某个值
+
+				$arr=["os"=>linux, "webserver"=>"Apache", "db"=>"MySQL", "language"=>"PHP"]
+				if(in_array('linux', $arr)){
+					echo "在数组中";
+				}else{
+					echo "不再数组中";
+				}
+
+				in_array('linux', $arr，true) 		//类型是否相等
+				in_array(array("a", "b"), $arr)
+			
+			array_search 在数组中搜索给定的值，如果成功则返回相应的键名
+				
+				$arr=["os"=>"linux", "webserver"=>"Apache", "db"=>"MySQL", "language"=>"PHP"];
+				echo array_search("linux", $arr); // os
+
+			array_key_exists 函数检查某个数组中是否存在指定的键名，如果键名存在则返回 true，如果键名不存在则返回 false
+
+				$arr=["os"=>"linux", "webserver"=>"Apache", "db"=>"MySQL", "language"=>"PHP", "home"=>null];
+				if(array_key_exists('os', $arr)){echo "在数组中";}else{echo "不再数组中";}		//在数组中
+				if(array_key_exists('home', $arr)){echo "在数组中";}else{echo "不再数组中";}		//在数组中
+
+			isset() 判断村不存在 ---空值判断不了
+
+				$arr=["os"=>"linux", "webserver"=>"Apache", "db"=>"MySQL", "language"=>"PHP", "home"=>null];
+				if(isset("os")){echo "存在"}else{echo "不存在"} 	//存在
+				if(isset("home")){echo "存在"}else{echo "不存在"} 	//不存在
+
+			array_flip  交换数组中的键和值
+
+				$arr=["os"=>"linux", "webserver"=>"Apache", "db"=>"MySQL", "language"=>"PHP"];
+				print_r($arr); // Array ( [os] => linux [webserver] => Apache [db] => MySQL [language] => PHP ) 
+				print_r(array_flip($arr));//Array ( [linux] => os [Apache] => webserver [MySQL] => db [PHP] => language )
+
+			array_reverse  反转
+				$arr=["os"=>"linux", "webserver"=>"Apache", "db"=>"MySQL", "language"=>"PHP"];
+				print_r(array_reverse($arr));//Array ( [language] => PHP [db] => MySQL [webserver] => Apache [os] => linux )
+
+				$arr=["linux", "Apache", "MySQL", "PHP"];
+				print_r(array_reverse($arr));//Array ( [0] => PHP [1] => MySQL [2] => Apache [3] => linux )
+				print_r(array_reverse($arr, true));//Array ( [3] => PHP [2] => MySQL [1] => Apache [0] => linux )
+
 		统计数组元素的个数与唯一性
+
+			count 计算数组的个数
+
+				$str="123asdf";
+				echo count($str);	//1
+				
+				$str="";
+				echo count($str);	//1
+
+				$arr=["linux", "Apache", "MySQL", "PHP"];
+				echo count($arr);	//4
+
+				统计二位数组
+				$web = array(
+					"lamp"=>array("os"=>"linux", "webserver"=>"Apache", "db"=>"MySQL", "langue"=>"PHP"),
+					"javaEE"=>array("os"=>"Unix", "webserver"=>"Fomcat", "db"=>"Oracle", "langue"=>"JSP")
+				);
+				echo count($web); //2
+				echo count($web, 1) //10
+			
+			array_count_values 统计数组中值出现的次数
+				
+				$lamp = array("os"=>"linux","linux","linux", "webserver"=>"Apache","Apache", "db"=>"MySQL", "langue"=>"PHP");
+
+				print_r(array_count_values($lamp));//Array ( [linux] => 3 [Apache] => 2 [MySQL] => 1 [PHP] => 1 )
+
+			array_unique 删除数组中重复的值
+
+				$lamp = array("os"=>"linux","linux","linux", "webserver"=>"Apache","Apache", "db"=>"MySQL", "langue"=>"PHP");
+
+				print_r(array_unique($lamp));//Array ( [os] => linux [webserver] => Apache [db] => MySQL [langue] => PHP )
+
 		使用回调函数处理数组的函数
+			array_filter  过滤数组
+				$arr = array(1,2,3,4,false,5,6,"",7,null,8,9,-1,-2,-3,-4,0);
+
+				print_r($arr);Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 [4] => [5] => 5 [6] => 6 [7] => [8] => 7 [9] => [10] => 8 [11] => 9 [12] => -1 [13] => -2 [14] => -3 [15] => -4 [16] => 0 ) 
+
+				print_r(array_filter($arr));//Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 [5] => 5 [6] => 6 [8] => 7 [10] => 8 [11] => 9 [12] => -1 [13] => -2 [14] => -3 [15] => -4 )
+
+				function myfun($value){
+					if($value>=0)
+						return true;
+					else
+						return false;
+				}
+
+				print_r(array_filter($arr, "myfun"));//Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 [4] => [5] => 5 [6] => 6 [7] => [8] => 7 [9] => [10] => 8 [11] => 9 [16] => 0 )
+
+				print_r(array_filter($arr, function($value){
+					return !($value%2 == 0);		//去掉2的倍数
+				}));//Array ( [0] => 1 [2] => 3 [5] => 5 [8] => 7 [11] => 9 [12] => -1 [14] => -3 )
+
+				print_r(array_values(array_filter($arr, function($value){ //键值重新排序
+					return !($value%2 == 0);		//去掉2的倍数
+				}))); //Array ( [0] => 1 [1] => 3 [2] => 5 [3] => 7 [4] => 9 [5] => -1 [6] => -3 )
+
+			array_walk 对数组中的每个成员应用用户函数
+
+				$arr = array(1,2,3,4,5);
+				function myfun(&$value){
+					return $value = $value*$value;
+				}
+				print_r($arr);//Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 [4] => 5 ) 
+				echo "<br>";
+				array_walk($arr, "myfun");
+				print_r($arr);//Array ( [0] => 1 [1] => 4 [2] => 9 [3] => 16 [4] => 25 )
+
+				获取下标
+
+					$arr = array("one"=>1,"two"=>2,"three"=>3,"four"=>4,"five"=>5);
+					print_r($arr);
+					echo "<br>";
+					array_walk($arr, function(&$value, $key){
+						$value = $key.$value;
+					});
+					print_r($arr); //Array ( [one] => one1 [two] => two2 [three] => three3 [four] => four4 [five] => five5 )
+						
+					-----
+
+					$arr = array("one"=>1,"two"=>2,"three"=>3,"four"=>4,"five"=>5);
+					print_r($arr);
+					echo "<br>";
+					array_walk($arr, function(&$value, $key, $str){
+						$value = $str.$key.$value;
+					}, "####");
+					print_r($arr); //Array ( [one] => ####one1 [two] => ####two2 [three] => ####three3 [four] => ####four4 [five] => ####five5 )
+			
+			array_map  将回调函数作用到给定数组的单元上(第一个是函数)
+				单数组
+					$arr = array(1,2,3,4,5);
+					print_r($arr);//Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 [4] => 5 ) 
+					echo "<br>";
+
+					function myfun($value){
+						return $value*$value*$value;
+					}
+
+					$rarr = array_map("myfun", $arr);
+
+					print_r($rarr);//Array ( [0] => 1 [1] => 8 [2] => 27 [3] => 64 [4] => 125 )
+				多数组
+					$arr = array(1,2,3,4,5);
+					$brr = array("one", "two", "three", "four", "five");
+					print_r($arr);//Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 [4] => 5 ) 
+					echo "<br>";
+
+					function myfun($value, $bvalue){
+						return $value.$bvalue;
+					}
+
+					$rarr = array_map("myfun", $arr, $brr);
+
+					print_r($rarr);//Array ( [0] => 1one [1] => 2two [2] => 3three [3] => 4four [4] => 5five )
+
+				为空
+					$arr = array(1,2,3,4,5);
+					$brr = array("one", "two", "three", "four", "five");
+
+					$rarr = array_map(null, $arr, $brr);
+
+					print_r($rarr);
+
+					返回为
+						Array
+						(
+						    [0] => Array
+						        (
+						            [0] => 1
+						            [1] => one
+						        )
+
+						    [1] => Array
+						        (
+						            [0] => 2
+						            [1] => two
+						        )
+
+						    [2] => Array
+						        (
+						            [0] => 3
+						            [1] => three
+						        )
+
+						    [3] => Array
+						        (
+						            [0] => 4
+						            [1] => four
+						        )
+
+						    [4] => Array
+						        (
+						            [0] => 5
+						            [1] => five
+						        )
+
+						)
+			
+
 		数组的排序函数
+
+			冒泡排序for循环
+				1.排序
+					$arr = array(0,1,2,3,4,5,6,7,8,9);
+					for($i=0;$i<count($arr)-1;$i++){
+						for($j=0;$j<count($arr)-1;$j++){
+							if($arr[$j]<$arr[$j+1]){
+								$tmp = $arr[$j];
+								$arr[$j] = $arr[$j+1];
+								$arr[$j+1] = $tmp;
+							}
+						}
+						print_r($arr);
+						echo "<br>";
+					}
+				2.优化 将count($arr)提取出来
+					$arr = array(0,1,2,3,4,5,6,7,8,9);
+					$len = count($arr);
+					for($i=0;$i<$len-1;$i++){
+						for($j=0;$j<$len-1;$j++){
+							if($arr[$j]<$arr[$j+1]){
+								$tmp = $arr[$j];
+								$arr[$j] = $arr[$j+1];
+								$arr[$j+1] = $tmp;
+							}
+						}
+						print_r($arr);
+						echo "<br>";
+					}
+				3.让循环递减
+					$arr = array(0,1,2,3,4,5,6,7,8,9);
+					$len = count($arr);
+					for($i=0;$i<$len-1;$i++){
+						for($j=0;$j<$len-$i-1;$j++){
+							if($arr[$j]<$arr[$j+1]){
+								$tmp = $arr[$j];
+								$arr[$j] = $arr[$j+1];
+								$arr[$j+1] = $tmp;
+							}
+							echo $arr[$j]."&nbsp;";
+						}
+						echo "<br>";
+						print_r($arr);
+						echo "<br>";
+					}
+				4.函数封装
+					$arr = array(0,1,2,3,4,5,6,7,8,9);
+					function mysort($arr){
+						$len = count($arr);
+						for($i=0;$i<$len-1;$i++){
+							for($j=0;$j<$len-$i-1;$j++){
+								if($arr[$j]<$arr[$j+1]){
+									$tmp = $arr[$j];
+									$arr[$j] = $arr[$j+1];
+									$arr[$j+1] = $tmp;
+								}
+							}
+						}
+						return $arr;
+					}
+
+					print_r($arr); //Array ( [0] => 0 [1] => 1 [2] => 2 [3] => 3 [4] => 4 [5] => 5 [6] => 6 [7] => 7 [8] => 8 [9] => 9 ) 
+					echo "<br>";
+					print_r(mysort($arr));//Array ( [0] => 9 [1] => 8 [2] => 7 [3] => 6 [4] => 5 [5] => 4 [6] => 3 [7] => 2 [8] => 1 [9] => 0 )
+				5.最终版mysort(&$arr)
+					$arr = array(0,1,2,3,4,5,6,7,8,9);
+					function mysort(&$arr){
+						$len = count($arr);
+						for($i=0;$i<$len-1;$i++){
+							for($j=0;$j<$len-$i-1;$j++){
+								if($arr[$j]<$arr[$j+1]){
+									$tmp = $arr[$j];
+									$arr[$j] = $arr[$j+1];
+									$arr[$j+1] = $tmp;
+								}
+							}
+						}
+					}
+
+					print_r($arr);//Array ( [0] => 0 [1] => 1 [2] => 2 [3] => 3 [4] => 4 [5] => 5 [6] => 6 [7] => 7 [8] => 8 [9] => 9 ) 
+					echo "<br>";
+					
+					mysort($arr);
+					print_r($arr);//Array ( [0] => 9 [1] => 8 [2] => 7 [3] => 6 [4] => 5 [5] => 4 [6] => 3 [7] => 2 [8] => 1 [9] => 0 )
+
 		拆分、合并、分解与结合
 		数组与数据结构
 		其他游泳的数组处理函数
+
