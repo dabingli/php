@@ -563,8 +563,564 @@
 					
 					mysort($arr);
 					print_r($arr);//Array ( [0] => 9 [1] => 8 [2] => 7 [3] => 6 [4] => 5 [5] => 4 [6] => 3 [7] => 2 [8] => 1 [9] => 0 )
+			二分排序
+				$arr = array(20,18,33,17,44,13,22,25,11,34,19,66);
 
+				function qsort($arr){
+					if(!is_array($arr) || empty($arr))
+						return array();
+					//获取数组的长度
+					$len = count($arr);
+					//如果数组中只有一个元素，直接返回这个数组
+					if($len<=1)
+						return $arr;
+
+					$key[0] = $arr[0];
+					
+					$left = array();
+					$right = array();
+
+					for($i=1; $i<$len; $i++){
+						if($arr[$i] <= $key[0]){
+							$left[] = $arr[$i];
+						}else{
+							$right[] = $arr[$i];
+						}
+					}
+
+					$left = qsort($left);
+					$right = qsort($right);
+
+					return array_merge($left, $key, $right);
+
+				}
+
+
+				print_r($arr);//Array ( [0] => 20 [1] => 18 [2] => 33 [3] => 17 [4] => 44 [5] => 13 [6] => 22 [7] => 25 [8] => 11 [9] => 34 [10] => 19 [11] => 66 ) 
+				echo "<br>";
+				print_r(qsort($arr));//Array ( [0] => 11 [1] => 13 [2] => 17 [3] => 18 [4] => 19 [5] => 20 [6] => 22 [7] => 25 [8] => 33 [9] => 34 [10] => 44 [11] => 66 )
+
+			
+
+			sort 对数组排序(升序)
+				1.数字排序
+
+					$arr = array(20,18,33,17,44,13,22,25,11,34,19,66);
+
+					print_r($arr); //Array ( [0] => 20 [1] => 18 [2] => 33 [3] => 17 [4] => 44 [5] => 13 [6] => 22 [7] => 25 [8] => 11 [9] => 34 [10] => 19 [11] => 66 ) 
+					echo "<br>";
+
+					sort($arr);
+					print_r($arr);//Array ( [0] => 11 [1] => 13 [2] => 17 [3] => 18 [4] => 19 [5] => 20 [6] => 22 [7] => 25 [8] => 33 [9] => 34 [10] => 44 [11] => 66 )
+
+				2.字母顺序排序
+					$arr = array("one", "two", "three", "four", "five");
+
+					print_r($arr);//Array ( [0] => one [1] => two [2] => three [3] => four [4] => five ) 
+					echo "<br>";
+					sort($arr);
+					print_r($arr);//Array ( [0] => five [1] => four [2] => one [3] => three [4] => two )	
+
+				补充
+					$arr = array("a", "10", "b", 20);
+
+					sort($arr);
+					print_r($arr);//Array ( [0] => 10 [1] => a [2] => b [3] => 20 )
+
+			rsort 对数组逆向排序(降序)
+				1.数字顺序
+					$arr = array(20,18,33,17,44,13,22,25,11,34,19,66);
+
+					print_r($arr); //Array ( [0] => 20 [1] => 18 [2] => 33 [3] => 17 [4] => 44 [5] => 13 [6] => 22 [7] => 25 [8] => 11 [9] => 34 [10] => 19 [11] => 66 ) 
+					echo "<br>";
+
+					rsort($arr);
+					print_r($arr);//Array ( [0] => 66 [1] => 44 [2] => 34 [3] => 33 [4] => 25 [5] => 22 [6] => 20 [7] => 19 [8] => 18 [9] => 17 [10] => 13 [11] => 11 )
+				
+				2.字母顺序排序
+					$arr = array("one", "two", "three", "four", "five");
+
+					print_r($arr);//Array ( [0] => one [1] => two [2] => three [3] => four [4] => five ) 
+					echo "<br>";
+					rsort($arr);
+					print_r($arr);//Array ( [0] => two [1] => three [2] => one [3] => four [4] => five )
+
+			ksort 对数组的键值进行排序
+				1.数字
+					$lamp = array(1=>"linux", 10=>"apache", 9=>"mysql", 6=>"php");
+
+					print_r($lamp);//Array ( [1] => linux [10] => apache [9] => mysql [6] => php ) 
+					echo '<br>';
+
+					ksort($lamp);
+					print_r($lamp);//Array ( [1] => linux [6] => php [9] => mysql [10] => apache )
+
+				2.字母
+					$lamp = array("p"=>"linux", "a"=>"apache", "d"=>"mysql", "l"=>"php");
+
+					print_r($lamp);//Array ( [p] => linux [a] => apache [d] => mysql [l] => php ) 
+					echo '<br>';
+
+					ksort($lamp);
+					print_r($lamp);//Array ( [a] => apache [d] => mysql [l] => php [p] => linux )
+
+			krsort 对数组的键值进行逆向排序
+				1.数字
+					$lamp = array(1=>"linux", 10=>"apache", 9=>"mysql", 6=>"php");
+
+					print_r($lamp);//Array ( [1] => linux [10] => apache [9] => mysql [6] => php ) 
+					echo '<br>';
+
+					ksort($lamp);
+					print_r($lamp);//Array ( [10] => apache [9] => mysql [6] => php [1] => linux )
+
+				2.字母
+					$lamp = array("p"=>"linux", "a"=>"apache", "d"=>"mysql", "l"=>"php");
+
+					print_r($lamp);//Array ( [p] => linux [a] => apache [d] => mysql [l] => php ) 
+					echo '<br>';
+
+					ksort($lamp);
+					print_r($lamp);//Array ( [p] => linux [l] => php [d] => mysql [a] => apache )
+
+			asort 对数组进行排序并保留索引
+				
+				$lamp = array("p"=>"linux", "a"=>"apache", "d"=>"mysql", "l"=>"php");
+
+				print_r($lamp);//Array ( [p] => linux [a] => apache [d] => mysql [l] => php ) 
+				echo '<br>';
+
+				asort($lamp);
+				print_r($lamp);//Array ( [a] => apache [p] => linux [d] => mysql [l] => php ) 
+				echo '<br>';
+
+				sort($lamp);
+				print_r($lamp);//Array ( [0] => apache [1] => linux [2] => mysql [3] => php )
+
+			arsort 对数组进行降序并保留索引
+				
+				$lamp = array("p"=>"linux", "a"=>"apache", "d"=>"mysql", "l"=>"php");
+
+				print_r($lamp);//Array ( [p] => linux [a] => apache [d] => mysql [l] => php ) 
+				echo '<br>';
+
+				arsort($lamp);
+				print_r($lamp);//Array ( [l] => php [d] => mysql [p] => linux [a] => apache ) 
+				echo '<br>';
+
+				rsort($lamp);
+				print_r($lamp);//Array ( [0] => php [1] => mysql [2] => linux [3] => apache )
+
+			array_multisort 对多个数组或多维数组进行排序
+
+				$arr = array("a", 10, "b", 20);
+				$brr = array(1, 4, 3, 2);
+
+				array_multisort($arr, $brr);
+
+				print_r($arr);//Array ( [0] => a [1] => b [2] => 10 [3] => 20 ) 
+				echo '<br>';
+				print_r($brr);//Array ( [0] => 1 [1] => 3 [2] => 2 [3] => 4 )
+
+				常量 SORT_DESC --降序  SORT_ASC --升序
+
+					SORT_DESC
+
+						$arr = array("a", 10, "b", 20);
+						$brr = array(1, 4, 3, 2);
+
+						array_multisort($arr,SORT_DESC, $brr);
+
+						print_r($arr);//Array ( [0] => 20 [1] => 10 [2] => b [3] => a ) 
+						echo '<br>';
+						print_r($brr);//Array ( [0] => 2 [1] => 4 [2] => 3 [3] => 1 )
+
+					SORT_DESC与SORT_ASC一起用
+						$arr = array("a", 10, "b", 10);
+						$brr = array(1, 4, 3, 2);
+
+						array_multisort($arr,SORT_DESC, $brr, SORT_DESC);
+
+						print_r($arr);//Array ( [0] => 10 [1] => 10 [2] => b [3] => a ) 
+						echo '<br>';
+						print_r($brr);//Array ( [0] => 4 [1] => 2 [2] => 3 [3] => 1 ) 
+						echo '<br>';
+
+						array_multisort($arr,SORT_DESC, $brr, SORT_ASC);
+						print_r($arr);//Array ( [0] => 10 [1] => 10 [2] => b [3] => a ) 
+						echo '<br>';
+						print_r($brr);//Array ( [0] => 2 [1] => 4 [2] => 3 [3] => 1 )
+
+					多维数组排序
+						按年龄排序
+							$data = array(
+								array("id"=>1, "name"=>"aa", "age"=>10),
+								array("id"=>2, "name"=>"ww", "age"=>20),
+								array("id"=>3, "name"=>"cc", "age"=>20),
+								array("id"=>4, "name"=>"dd", "age"=>40)
+							);
+
+							$age = array();
+							foreach($data as $value){
+								$age[] = $value["age"];
+							}
+
+							print_r($age);//Array ( [0] => 10 [1] => 20 [2] => 20 [3] => 40 )
+
+							array_multisort($age, $data);
+							echo '<pre>';
+							print_r($data);//
+							echo '</pre>';
+										Array
+										(
+										    [0] => Array
+										        (
+										            [id] => 1
+										            [name] => aa
+										            [age] => 10
+										        )
+
+										    [1] => Array
+										        (
+										            [id] => 2
+										            [name] => ww
+										            [age] => 20
+										        )
+
+										    [2] => Array
+										        (
+										            [id] => 3
+										            [name] => cc
+										            [age] => 20
+										        )
+
+										    [3] => Array
+										        (
+										            [id] => 4
+										            [name] => dd
+										            [age] => 40
+										        )
+
+										)
+						年龄排序有重复的在按姓名排序
+							$data = array(
+								array("id"=>1, "name"=>"aa", "age"=>10),
+								array("id"=>2, "name"=>"ww", "age"=>20),
+								array("id"=>3, "name"=>"cc", "age"=>20),
+								array("id"=>4, "name"=>"dd", "age"=>40)
+							);
+
+							$age = array();
+							$names = array();
+							foreach($data as $value){
+								$age[] = $value["age"];
+								$names[] = $value['name'];
+							}
+
+							print_r($age);//Array ( [0] => 10 [1] => 20 [2] => 20 [3] => 40 ) 
+							echo '<br>';
+							print_r($names);//Array ( [0] => aa [1] => ww [2] => cc [3] => dd )
+
+							array_multisort($age, $names, $data);
+							echo '<pre>';
+							print_r($data);
+							echo '</pre>';
+										Array
+										(
+										    [0] => Array
+										        (
+										            [id] => 1
+										            [name] => aa
+										            [age] => 10
+										        )
+
+										    [1] => Array
+										        (
+										            [id] => 3
+										            [name] => cc
+										            [age] => 20
+										        )
+
+										    [2] => Array
+										        (
+										            [id] => 2
+										            [name] => ww
+										            [age] => 20
+										        )
+
+										    [3] => Array
+										        (
+										            [id] => 4
+										            [name] => dd
+										            [age] => 40
+										        )
+
+										)
+							按名字导序
+								$data = array(
+									array("id"=>1, "name"=>"aa", "age"=>10),
+									array("id"=>2, "name"=>"ww", "age"=>20),
+									array("id"=>3, "name"=>"cc", "age"=>20),
+									array("id"=>4, "name"=>"dd", "age"=>40)
+								);
+
+								$age = array();
+								$names = array();
+								foreach($data as $value){
+									$age[] = $value["age"];
+									$names[] = $value['name'];
+								}
+
+								print_r($age);
+								echo '<br>';
+								print_r($names);
+
+								array_multisort($age, SORT_DESC, $names, SORT_DESC, $data);
+								echo '<pre>';
+								print_r($data);
+								echo '</pre>';
+										Array
+										(
+										    [0] => Array
+										        (
+										            [id] => 4
+										            [name] => dd
+										            [age] => 40
+										        )
+
+										    [1] => Array
+										        (
+										            [id] => 2
+										            [name] => ww
+										            [age] => 20
+										        )
+
+										    [2] => Array
+										        (
+										            [id] => 3
+										            [name] => cc
+										            [age] => 20
+										        )
+
+										    [3] => Array
+										        (
+										            [id] => 1
+										            [name] => aa
+										            [age] => 10
+										        )
+
+										)
 		拆分、合并、分解与结合
-		数组与数据结构
-		其他游泳的数组处理函数
+				array_slice  	从数组中取出一段
+					$arr = array("a", "b", "c", "d", "e");
 
+					print_r($arr);//Array ( [0] => a [1] => b [2] => c [3] => d [4] => e ) 
+					echo '<br>';
+					
+					$narr = array_slice($arr, 2);
+					print_r($narr);//Array ( [0] => c [1] => d [2] => e )
+
+					echo '<br>';
+					$narr = array_slice($arr, 2, 4);
+					print_r($narr);//Array ( [0] => c [1] => d )
+					$narr = array_slice($arr, 2, 4, true);
+					print_r($narr);//Array ( [2] => c [3] => d [4] => e )
+
+				array_splice 将数组一部分去掉或代替
+					$arr = array("a", "b", "c", "d", "e");
+
+					print_r($arr);//Array ( [0] => a [1] => b [2] => c [3] => d [4] => e ) 
+					echo '<br>';
+
+					array_splice($arr, 2);
+					print_r($arr);//Array ( [0] => a [1] => b )
+
+					代替
+						1.字符串
+							$arr = array("a", "b", "c", "d", "e");
+
+							print_r($arr);//Array ( [0] => a [1] => b [2] => c [3] => d [4] => e ) 
+							echo '<br>';
+
+							array_splice($arr, 2, 2, "hello");
+							print_r($arr);//Array ( [0] => a [1] => b [2] => hello [3] => e )
+
+						2.数组
+							$arr = array("a", "b", "c", "d", "e");
+
+							print_r($arr);//Array ( [0] => a [1] => b [2] => c [3] => d [4] => e ) 
+							echo '<br>';
+
+							array_splice($arr, 2, 2, array("hello", "word", "this"));
+							print_r($arr);//Array ( [0] => a [1] => b [2] => hello [3] => word [4] => this [5] => e )
+			array_combine  创建一个数组，用一个数组的值为其键名，另一个数组作为其值
+				$a = array('os', 'webserver', 'db', 'langue');
+				$b = array('Linux', "Apache", "MySQL", "PHP"); 
+
+				$arr = array_combine($a, $b);
+				print_r($arr); //Array ( [os] => Linux [webserver] => Apache [db] => MySQL [langue] => PHP )
+
+
+			+号合并数组 
+				//下标相同的会覆盖，是前面覆盖后面的
+				$a = array("a", "b", "c");
+				$b = array(10, 11, 12);
+
+				$c = $a + $b;
+
+				print_r($c);//Array ( [0] => a [1] => b [2] => c )
+
+			array_merge  合并一个或多个数组
+				索引数组
+					$a = array("a", "b", "c");
+					$b = array(10, 11, 12);
+
+					$c = array_merge($a, $b);
+
+					print_r($c);//Array ( [0] => a [1] => b [2] => c [3] => 10 [4] => 11 [5] => 12 )
+
+					下标相同的索引数组
+						$a = array("a", 5=>"b", "c");
+						$b = array(10, 5=>11, 12);
+
+						$c = array_merge($a, $b);
+
+						print_r($c);//Array ( [0] => a [1] => b [2] => c [3] => 10 [4] => 11 [5] => 12 )
+					
+					下标相同的关联数组
+						$a = array("a", "abc"=>"b", "c");
+						$b = array(10, "abc"=>11, 12);
+
+						$c = array_merge($a, $b);
+
+						print_r($c);//Array ( [0] => a [abc] => 11 [1] => c [2] => 10 [3] => 12 )
+
+					一个数字从新索引和 array_values 相同
+						$a = array("a", 5=>"b", "c");
+
+						$c = array_merge($a);
+						$d = array_values($a);
+
+						print_r($c);// Array ( [0] => a [1] => b [2] => c )
+						print_r($d);// Array ( [0] => a [1] => b [2] => c )
+
+			array_intersect 计算数组的交集
+				$a = array(10,11,12,13,14);
+				$b = array(5,6,12,15,14);
+
+				$c = array_intersect($a, $b);
+				print_r($c);//Array ( [2] => 12 [4] => 14 )
+
+					数组开头去掉相同的
+						$a = array(5,6,10,11,12,13,14);
+						$b = array(5,6,12,15,14);
+
+						//$count = (count($a) >= count($b)) ? count($b) : count($a);
+						$count = min(count($a), count($b));
+
+						$narr = array();
+						for($i=0; $i<$count; $i++){
+							if($a[$i] == $b[$i]){
+								$narr[] = $a[$i];
+							}else{
+								break;
+							}
+						}
+
+						print_r($narr);//Array ( [0] => 5 [1] => 6 )
+
+			array_diff 计算差集
+				$a = array(5,6,10,11,12,13,14);
+				$b = array(5,6,12,15,14);
+
+				$narr = array_diff($a, $b);
+				print_r($narr);//Array ( [2] => 10 [3] => 11 [5] => 13 )
+		数组与数据结构
+			array_push  追加数组
+				$arr = array();
+				array_push($arr,"1", 4, 5, 6);
+
+				print_r($arr);//Array ( [0] => 1 [1] => 4 [2] => 5 [3] => 6 )
+
+			array_pop 弹出
+				$arr = array();
+				array_push($arr,"1", 4, 5, 6);
+
+				print_r($arr);//Array ( [0] => 1 [1] => 4 [2] => 5 [3] => 6 ) 
+				echo '<br>';
+				echo array_pop($arr);//6
+				echo '<br>';
+				print_r($arr);//Array ( [0] => 1 [1] => 4 [2] => 5 )
+
+			array_unshift  在数组前追加
+				$arr = array(1,2,3,4);
+				array_unshift($arr, 5,8,9);
+
+				print_r($arr);//Array ( [0] => 5 [1] => 8 [2] => 9 [3] => 1 [4] => 2 [5] => 3 [6] => 4 )
+
+			array_shift  前面弹出
+				$arr = array(1,2,3,4);
+				print_r($arr);//Array ( [0] => 1 [1] => 2 [2] => 3 [3] => 4 ) 
+				echo '<br>';
+				echo array_shift($arr);//1
+				echo '<br>';
+				print_r($arr);//Array ( [0] => 2 [1] => 3 [2] => 4 )
+		其他有用的数组处理函数
+
+			array_rand 随机从数组中取出一个或多个单元
+				$arr = array("a", "b", "c", "d");
+
+				var_dump(array_rand($arr));//随机下标如int(2)
+				
+				var_dump(array_rand($arr, 3));//array(3) { [0]=> int(1) [1]=> int(2) [2]=> int(3) }
+
+				面试题
+					以下代码的执行后是，$result值为:
+
+					<?php 
+						$srcArray = array('a','b','c','d');
+						$randValue=array_rand($srcArray);
+						$result=is_string($randValue);
+					?>
+					A: a  B: false  C: ture b  D: b   E: c
+
+		  shuffle 打乱数组
+
+		  	$arr = array("a", "b", "c", "d");
+		  	shuffle($arr);
+		  	print_r($arr);//随机 如：Array ( [0] => c [1] => a [2] => d [3] => b )
+	    
+	    array_sum  求出数组和
+        字符串
+	      	$arr = array("a", "b", "c", "d");
+	        $b = array_sum($arr);
+
+	        echo $b; //0
+        数字
+
+          $arr = array(1, 2, 3, 4);
+          $b = array_sum($arr);
+
+          echo $b;//10
+
+      range  包含指令范围
+	      1.数字
+	        $arr = range(0, 10);
+	        $barr = range(0, 10, 3);
+
+	        print_r($arr);//Array ( [0] => 0 [1] => 1 [2] => 2 [3] => 3 [4] => 4 [5] => 5 [6] => 6 [7] => 7 [8] => 8 [9] => 9 [10] => 10 )
+	        print_r($brr);//Array ( [0] => 0 [1] => 3 [2] => 6 [3] => 9 )
+        2.字符
+
+          $arr = range("a", "f");
+
+          print_r($arr);//Array ( [0] => a [1] => b [2] => c [3] => d [4] => e [5] => f )
+
+      array_fill   填充
+
+        $arr = array_fill(0, 10, "hello php");
+
+        print_r($barr);//Array ( [0] => hello php [1] => hello php [2] => hello php [3] => hello php [4] => hello php )
+
+
+					
