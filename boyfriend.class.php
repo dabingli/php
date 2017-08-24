@@ -1,33 +1,24 @@
 <?php
-	/*
-		属性
-			性别：男
-			年龄：25
-			身高：175cm
-			眼睛：大
-
-		行为
-			做饭
-			做家务
-
-		class 类名 {
-		
-
-		}
-	*/
-	class BoyFriend {
+	class Person{
 		public $name;
 		public $age;
 		public $sex;
-		function __construct($name, $age, $sex="男"){
+
+		function __construct($name="", $age=0, $sex="男"){
 			$this->name = $name;
-			$this->age = $age;
-			$this->sex = $sex;
-			$this->dofan();
+			$this->age = $name;
+			$this ->sex = $sex;
 		}
-		function dofan(){
-			echo $this->name."年龄".$this->age."性别是".$this->sex;
+		private function say(){
+			echo "说话<br>";
+		}
+		function eat(){
+			echo "吃饭<br>";
+		} 
+		function __destruct(){
+			echo "再见  {$this->name} <br>";
 		}
 	}
-
-	$bf1 = new BoyFriend("xiaoming", 18, "男");
+	$preson = new Person('小明', 20);
+	$preson->say();
+	$preson->eat();
