@@ -111,23 +111,23 @@
 
 			$bf1 = new BoyFriend("xiaoming", 18, "男");//xiaoming年龄18性别是男
 
-			魔术方法__contruct();
-				class BoyFriend {
-					public $name;
-					public $age;
-					public $sex;
-					function __construct($name, $age, $sex="男"){
-						$this->name = $name;
-						$this->age = $age;
-						$this->sex = $sex;
-						$this->dofan();
-					}
-					function dofan(){
-						echo $this->name."年龄".$this->age."性别是".$this->sex;
-					}
+		魔术方法__contruct();
+			class BoyFriend {
+				public $name;
+				public $age;
+				public $sex;
+				function __construct($name, $age, $sex="男"){
+					$this->name = $name;
+					$this->age = $age;
+					$this->sex = $sex;
+					$this->dofan();
 				}
+				function dofan(){
+					echo $this->name."年龄".$this->age."性别是".$this->sex;
+				}
+			}
 
-				$bf1 = new BoyFriend("xiaoming", 18, "男");//xiaoming年龄18性别是男
+			$bf1 = new BoyFriend("xiaoming", 18, "男");//xiaoming年龄18性别是男
 	
 	析构方法  __destruct()
 		对象销毁之前最后调用的方法
@@ -145,7 +145,267 @@
 		将一些"特殊的方法"，加上一个关键词 privated 修饰,  就不能拿到这个对象之后，用对象中private所有内容，但对象自己中的其他成员可以使用，因为是自己使用自己的成员
 
 			class Person {
+				function eat(){
+					$this->say();
+				}
 				private function say(){
 					echo "说话";
 				}
 			}
+			$preson = new Person();
+			$person->eat();//说话
+
+		魔术封装
+			魔术方法
+				__get()
+					1.自动调用，是在直接访问私有成员时自动调用
+						class Person{
+							private $name;
+
+							function __construct($name, $age){
+								$this->name = $name;
+							}
+
+							function __isset($proname){
+								echo "$proname  #########<br>";
+							}
+
+						}
+						$preson = new Person('小明', 20);
+
+						if(isset($preson->name)){ 
+							echo "cunzai";	
+						}else{
+							echo "bucunzai";
+						}
+							//  name #########
+									bucunzai
+				__set()
+					1.自动调用，是在直接设置私有属性值时自动调用
+						class Person{
+							private $name;
+
+							function __set($name, $value){
+								echo "{$name}---{$value}<br>";
+							}
+
+						}
+						$preson = new Person('小明', 20);
+						$preson->name = "wangming"; //name---wangming
+
+				__isset()
+					在使用isset()判断一个私有属性是否存在时，自动调用__isset()魔术方法，参数则是属性名称
+					class Person{
+						public $name;
+
+						function __construct($name, $age){
+							$this->name = $name;
+						}
+
+					}
+					$preson = new Person('小明', 20);
+					if(isset($person->name)){ 
+						echo "cunzai";	
+					}else{
+						echo "bucunzai";
+					} // cunzai
+
+				__unset()
+
+		类的继承  基类(父类)  源生类(子类)
+
+			扩展 extends
+
+				1.子类使用extends继承父类 子类可以将父类所有内容继承过来
+					
+					class Person{
+						function say(){
+							echo "1111<br>";
+						}
+					}
+					class Student extends Person{
+
+					}
+
+					$s = new Student();
+					$s->say(); // 1111
+
+				2. private 这个是私有的，只能自己用，不能别人用，包括子类用
+
+				3.protected 这个是保护的权限，只能自己或子类用
+
+					class Person{
+						protected $name;
+
+						function __construct($name){
+							$this->name = $name;
+						}
+					}
+
+					class Student extends Person{
+						var $school;
+						function say(){
+							echo "{$this->name} 111<br>";
+						}
+					}
+
+					$s = new Student("xiaoming");
+					$s->say();//xiaoming 111
+
+				4.public 这个是公开的权限，所有都可以使用
+
+			继承中的重载(覆盖)
+				在子类中可以写和父类同名的方法
+
+					1.简单
+
+						class Person{
+							function say(){
+								echo "1111<br>";
+							}
+						}
+
+						class Student extends Person{
+							function say(){
+								echo "1111<br>";
+								echo "22222<br>";
+							}
+						}
+
+						$s = new Student("xiaoming");
+						$s->say();// 1111   2222
+
+					2.调用父类相同的方法
+
+						class Person{
+							function say(){
+								echo "1111<br>";
+							}
+						}
+
+						class Student extends Person{
+							function say(){
+								Person::say();
+								echo "22222<br>";
+							}
+						}
+
+						$s = new Student("xiaoming");
+						$s->say(); // 1111  222
+
+					3.更高一级的 parent::成员
+
+						重要：只要是子类的构造方法，去覆盖父类的构造方法，一定要在子类的最上面调用一下父类被覆盖的方法
+
+						权限的问题： 子类只能大于或等于父类的权限、不能小于
+
+						class Person{
+							protected $name;
+							function __construct($name){
+								$this->name = $name;
+							}
+							function say(){
+								echo "1111<br>";
+							}
+						}
+
+						class Student extends Person{
+							function __construct($name, $age){
+								parent::__construct($name);
+								$this->age = $age;
+							}
+							function say(){
+								parent::say();
+								echo "姓名：{$this->name},年龄：{$this->age} 22222<br>";
+							}
+						}
+
+
+						$s = new Student("xiaoming", 20);
+						$s->say();//  1111
+												  姓名：xiaoming,年龄：20 22222
+
+			php关键字
+				instanceof 操作符(关键字)
+					instanceof操作符用于检测当前对象实例是否属于某一个类的类型
+					
+					class Person{
+					
+					}
+
+					$p = new Person("gaoming", 30);
+					if($p instanceof Person){
+						echo "是<br>";
+					}else{
+						echo '否<br>';
+					}  //是
+
+				final 修饰
+					在PHP中final不定义常量，所以就不会使用，也不能使用final来修饰成员属性
+
+					1.final可以修饰类 -- 这个类不能去扩展，不能由子类(不让别人去扩展，这个类是最终的类时)
+
+						final class Person{}
+
+					2.final可以修饰方法 -- 这个方法，也就不能在子类中覆盖(不能让子类改这个方法，或扩展这个方法的功能时)
+
+						class Person{
+							final function eat(){}
+						}
+
+				static 静态关键字 --可以修饰属性和方法，不能修饰类
+
+					1.使用static修饰的成员属性，存在内存的初始化静态段
+					2.可以被所有一个类的对象共用
+					3.第一次用到类(类名第一次出现)，类在加载到内存时，就已经将静态的成员加载到内存
+					4.静态的成员一定要使用类来访问
+						
+						1.在外部取值
+							class Person{
+								public $name = "zhangsan";
+								public static $country = "China";
+								function __construct($name){
+									$this->name = $name;
+								}
+							}
+
+							echo Person::$country; // China
+							echo Person::$name;	//报错
+						2.在内部调用
+
+							class Person{
+								public $name;
+								public static $country = "China";
+								function __construct($name = "zhangsan"){
+									$this->name = $name;
+								}
+								function say(){
+									echo "我叫 {$this->name} , 我的国家 ".Person::$country;
+								}
+							}
+
+							$per = new Person();
+							$per->say();//我叫 zhangsan , 我的国家 China
+
+						3.在内部调用 优化 用self替换类名、
+
+							class Person{
+								public $name;
+								public static $country = "China";
+								function __construct($name = "zhangsan"){
+									$this->name = $name;
+								}
+								function say(){
+									echo "我叫 {$this->name} , 我的国家 ".self::$country;
+								}
+							}
+
+							$per = new Person();
+							$per->say(); //我叫 zhangsan , 我的国家 China
+
+					5.静态成员一旦被加载，只有脚本结束才释放
+
+
+		设计模式
+
+122.112.212.194:8010
