@@ -1,0 +1,107 @@
+1.不用PHP函数，用方法写一个反转字符串的函数
+	
+	$str = "www.lampphp.net";
+	echo strrev($str); //ten.phppmal.www
+	echo "<br>";
+
+	function fan($str){
+		$m = strlen($str)-1;
+		$nstr = "";
+		for($i=$m; $i>=0; $i--){
+			$nstr .= $str{$i};
+		}
+
+		return $nstr;
+	}
+
+	echo fan($str); //ten.phppmal.www
+
+2.写一个函数，将一个字符串(如：1234567890),转换成(如1,234,567,890)每3位用逗号隔开的形式
+	第一种写法
+		$str = "1234567890";
+		echo number_format($str); //1,234,567,890
+
+	第二种解法
+		$str = "1234567890";
+
+		function numberFormat($str){
+			$nstr = "";
+
+			$mstr = strrev($str);
+			$len = strlen($str);
+			for($i=0;$i<$len;$i++){
+				if($i%3==0 && $i != 0){
+					$nstr .= ",";
+				}
+				$nstr .= $mstr{$i};
+			}
+
+			return strrev($nstr);
+
+		}
+
+		echo numberFormat($str);//1,234,567,890
+
+	第三种方法
+		$str = "1234567890";
+
+		function numberFormat($str){
+			$len = strlen($str);
+
+			$nstr = "";
+			
+			$k = $len % 3; //让整个长度和3取余之后余数是多少 = 1
+
+			for($i=0;$i<$len;$i++){
+				if($i%3 == $k && $i != 0){
+					$nstr .= ",";
+				}
+				$nstr .= $str{$i};
+			}
+
+			return $nstr;
+		}
+
+		echo numberFormat($str); //1,234,567,890
+
+3.请写一个获取文件扩展名的函数
+	如 test.php logo.php page.class.php  home/lola/logo.inc.gif  http://www.lampbrother.net/aa/bb/cc/ini.ini.php?u=admin&p=1
+
+	function extname($url){
+		if(strstr($url, "?")){
+			//如果有问好格式的文件，将问号前的取出
+			// list($q, $h) = explode("?", $url);
+			list($file) = explode("?", $url);
+		}else{
+			$file = $url;
+		}
+		//取出文件名
+		$f = strrpos($file, "/")+1;
+		$filename = substr($file, $f);
+
+		//取扩展名称
+		$arr = explode(".", $filename);
+		return array_pop($arr);
+	}
+
+	extname($url);
+
+4.写一个函数，尽可能高高效的，从一个标准url里取出文件扩展名例如：http://www.baidu.com/abc/de/fg.php?id=1需要取出php或.php
+	
+	$url = "http://www.baidu.com/abc/de/fg.php?id=1";
+	function extname($url){
+		$arr = parse_url($url); //Array ( [scheme] => http [host] => www.baidu.com [path] => /abc/de/fg.php [query] => id=1 )
+
+		// $arr['path']; ///abc/de/fg.php
+
+		$file = basename($arr['path']); //fg.php
+
+		$ext = explode(".", $file);
+
+		return array_pop($ext); //php
+	}
+
+	echo extname($url);
+
+	注意： $url = "http://www.baidu.com/abc/de/fg.php?id=1";
+	echo basename($url);// fg.php?id=1

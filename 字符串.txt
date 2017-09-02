@@ -1,0 +1,231 @@
+字符串的声明(数据类型)
+	1.可以使用双引号，也可以使用单引号
+		双引号中可以解析变量，双引号中可以使用所有的转义字符
+	2. <<<
+
+分割 匹配 查找 替换
+
+特点：如果是其他类型的数据，也可以使用字符串处理函数，先将其他类型自动转成了字符串后在处理	
+
+	count("aaaaaa"); // 1
+	strlen("hello"); //5
+	echo strlen(10000); // 5
+
+	字符串可以像数组一样，通过下标，来访问每一个字符.但不是数组(数组也可以通过{}下标访问)
+
+		$str = "hello";
+		echo $str{0}; //h  字符串建议使用{}
+		echo $str[0]; //h
+
+		赋值
+			1.单个字符
+				$str = "hello";
+				$str{2} = "w";
+				echo $str; //hewlo
+			2.多个字符
+				$str = "hello";
+				$str{2} = "word";
+				echo $str;
+			3.数组
+				$str = array("one"=>"hello", "two"=>"word");
+				echo "aaaaaaaaa{$str["one"]}aaaaaaaaa<br>"; //aaaaaaaaahelloaaaaaaaaa
+				echo "aaaaaaaaa".$str["one"]."aaaaaaaaa<br>"; //aaaaaaaaahelloaaaaaaaaa
+				echo "aaaaaaaaa$str[one]aaaaaaaaa<br>"; //aaaaaaaaahelloaaaaaaaaa
+
+	将字符串偶数组合
+		$str = "ajfiwefwfawkehfia";
+		$s = "";
+		for($i=0; $i<strlen($str); $i++){
+			if($i%2 == 0){
+				$s .= $str{$i};
+			}
+		}
+		echo $str.'<br>'; //ajfiwefwfawkehfia
+		echo $s.'<br>';	//afwffwefa
+
+		echo strlen("中国"); // 6
+
+
+	中文截取字符串
+		$str = "hello word";
+		$str1 = "妹子你好";
+
+		echo substr($str, 0, 7);//hello w
+		echo "<br>";
+		echo substr($str1, 0, 7);//妹子�
+		echo "<br>";
+		echo mb_substr($str1, 0, 7, "utf-8"); //妹子你好
+
+输出字符串
+	echo()  --输出字符串
+	print() --输出字符串
+		echo与print之间的区别
+			1.print有返回值;echo没有返回值
+			2.echo 可以打印多个参数; print不可以
+	die() 是exit()别名，输出并退出程序
+		die("bbbb"); //bbbb
+		exit("aaaaa"); //aaaaa
+	printf() --输出格式化字符串
+	sprintf() --格式化的字符串写入一个变量中
+
+常用字符串格式化函数
+	trim 删除字符串左右空格  rtrim删除右边  ltrim删除左边
+
+		$str = "hello word!"; //hello word!
+		echo $str."<br>";
+		echo rtrim($str, "!"); //hello word
+
+		按字符算
+			$str = "hello wo9r8d89i0";
+
+			echo $str."<br>"; //hello wo9r8d89i0
+
+			$nstr = trim($str, "89i0");
+
+			echo $nstr; //hello wo9r8d
+
+			2.范围
+				$str = "hello world8i9i0";
+				$nstr = trim($str, "i0..9"); //hello world
+
+	str_pad() 按需求对字符串进行填充
+		$str = "lamp";
+
+		$nstr = str_pad($str, 10);
+		echo strlen($nstr); //10
+
+		2.用符号补充长度
+			$str = "lamp";
+
+			$nstr = str_pad($str, 10, "#");
+			echo $nstr; //lamp######
+
+		STR_PAD_LEFT 在左侧补
+			$str = "lamp";
+
+			$nstr = str_pad($str, 10, "#", STR_PAD_LEFT);
+			echo $nstr; //######lamp
+
+		STR_PAD_BOTH	
+			$str = "lamp";
+
+			$nstr = str_pad($str, 10, "#", STR_PAD_BOTH);
+			echo $nstr; //###lamp###
+
+		STR_PAD_RIGHT 默认
+			$str = "lamp";
+			$nstr = str_pad($str, 10, "#", STR_PAD_RIGHT);
+			echo $nstr; //lamp######
+
+	$str = "this is a test Apaceh MySQL PHP";
+
+	strtolower  将字符串全部变成消协
+		echo strtolower($str); //this is a test apaceh mysql php
+	strtoupper()  将字符串全部变成大写
+		echo strtoupper($str);//THIS IS A TEST APACEH MYSQL PHP
+	ucfirst()  将第一个字的字母变成大写
+		echo ucfirst($str); //This is a test Apaceh MySQL PHP
+	ucwords()  将每个单词首字母转成大写
+		echo ucwords($str); //This Is A Test Apaceh MySQL PHP
+
+	组合应用
+		echo ucfirst(strtolower($str)); //This is a test apaceh mysql php
+
+和HTML标签相关联的字符串格式化
+	htmlspecialchars()
+		echo "<h1>hellow</h1>";  //hellow
+		echo htmlspecialchars("<h1>hellow</h1>"); //<h1>hellow</h1>
+
+	strip_tags删除标签
+		echo strip_tags("<h1>hellow</h1>"); //hellow
+
+		2.选择性保留哪些标签
+			echo strip_tags("<h1><b><u>hellow</u></b></h1>", "<u><b>"); //hellow --源代码展示<b><u>hellow</u></b>
+
+	nl2br
+
+		$str = "this is a test\n";
+		$str .= "this is a demo\n";
+		$str .= "this is a hello\n";
+
+		echo $str."<br>"; //this is a test this is a demo this is a hello 
+		echo nl2br($str);	//this is a test
+												this is a demo
+												this is a hello
+
+字符串比较函数
+	1.使用等号比较字符串(常见)
+		$str1 = "abc";
+		$str2 = "abc";
+		if($str1 == $str2){
+			echo "相等";
+		}else{
+			echo "不相等";
+		} //相等
+
+		注意：如果是不区分大小写的进行比较，两个比较的字符串要么都转成大写，要么全转成小写
+
+			$str1 = "abc";
+			$str2 = "Abc";
+			if(strtolower($str1) == strtolower($str2)){
+				echo "相等";
+			}else{
+				echo "不相等";
+			} //相等
+
+		2.字符比较
+			strcmp() 二进制安全字符串比较
+				$str1 = "abc";
+				$str2 = "Abc";
+				if(strcmp($str1, $str2) == 0){
+					echo "相等";
+				}else{
+					echo "不相等";
+				} //不相等
+
+
+				$str1 = "abc";
+				$str2 = "abcD";
+				switch(strcmp($str1, $str2)){
+					case 0:
+						echo "第一个字符串{$str1}等于第二个字符串{$str2}";break;
+					case 1:
+						echo "第一个字符串{$str1}大于第二个字符串{$str2}";break;
+					case -1:
+						echo "第一个字符串{$str1}小于第二个字符串{$str2}";break;
+				} //第一个字符串abc小于第二个字符串abcD
+
+			strcasecmp() 不区分大小写
+				$str1 = "abc";
+				$str2 = "Abc";
+				switch(strcasecmp($str1, $str2)){
+					case 0:
+						echo "第一个字符串{$str1}等于第二个字符串{$str2}";break;
+					case 1:
+						echo "第一个字符串{$str1}大于第二个字符串{$str2}";break;
+					case -1:
+						echo "第一个字符串{$str1}小于第二个字符串{$str2}";break;
+				}//第一个字符串abc等于第二个字符串Abc
+
+		3.按自然顺序比较
+
+			strnacasetcmp
+
+				$str1 = "file11.txt";
+				$str2 = "file2.txt";
+				switch(strnatcasecmp($str1, $str2)){
+					case 0:
+						echo "第一个字符串{$str1}等于第二个字符串{$str2}";break;
+					case 1:
+						echo "第一个字符串{$str1}大于第二个字符串{$str2}";break;
+					case -1:
+						echo "第一个字符串{$str1}小于第二个字符串{$str2}";break;
+				}//第一个字符串file11.txt大于第二个字符串file2.txt
+
+		$arr = array("file1.txt", "file2.txt", "file11.txt", "file12.txt");
+		usort($arr, "strcmp");
+		print_r($arr); //Array ( [0] => file1.txt [1] => file11.txt [2] => file12.txt [3] => file2.txt )
+
+		$arr = array("file1.txt", "file11.txt", "file12.txt", "file2.txt");
+		usort($arr, "strnatcasecmp");
+		print_r($arr);//Array ( [0] => file1.txt [1] => file2.txt [2] => file11.txt [3] => file12.txt )
