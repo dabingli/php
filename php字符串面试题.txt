@@ -105,3 +105,43 @@
 
 	注意： $url = "http://www.baidu.com/abc/de/fg.php?id=1";
 	echo basename($url);// fg.php?id=1
+
+5.写一个函数，算出两个文件的相对路径如： $a='/a/b/c/d/e.php' $b='/a/b/12/34/c.php'计算出$b相对于$a的相对路径应该是../../c/d
+
+	$a='/a/b/c/d/e.php';
+	 $b='/a/b/12/34/c.php';
+
+	 function abspath($a, $b){
+	 	$path = "";
+	 	//第一步去除公共的目录
+	 	// $a = dirname($a); //  /a/b/c/d
+	 	// $b = dirname($b);// /a/b/12/34
+
+	 	// $a = trim($a, "/"); // a/b/c/d
+	 	// $b = trim($b, "/");// a/b/12/24
+
+	 	// $a = explode("/", $a); //array("a", "b", "c", "d")
+	 	// $b = explode("/", $b); //array("a", "b", "12", "24")
+	 	$a = explode("/", trim(dirname($a), "/"));
+	 	$b = explode("/", trim(dirname($b), "/"));
+
+	 	$len = max(count($a), count($b));
+
+	 	for($i=0; $i<$len; $i++){
+	 		if($a[$i] == $b[$i]){
+	 			unset($a[$i]);
+	 			unset($b[$i]);
+	 		}else{
+	 			break;
+	 		}
+	 	}
+
+	 	//$a = array("c", "d")
+	 	//$b = array("12", "34")
+	 	//第二步，回到同级目录，进入另一个目录
+	 	$path = str_repeat("../", count($b)).implode("/", $a);
+
+	 	return $path;
+	 }
+	 
+	 echo abspath($a, $b);

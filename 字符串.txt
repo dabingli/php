@@ -229,3 +229,142 @@
 		$arr = array("file1.txt", "file11.txt", "file12.txt", "file2.txt");
 		usort($arr, "strnatcasecmp");
 		print_r($arr);//Array ( [0] => file1.txt [1] => file2.txt [2] => file11.txt [3] => file12.txt )
+
+正则
+	原子
+		\d    代表任意一个数字
+		\D    代表任意一个非数字
+		\w   代表任意一个字a-z A-Z 0-9 _
+		\W   代表任意一个非字 除了 a-z A-Z 0-9 _之外
+		\s     代表空白
+		\S     代表任意一个非空白
+		.       点元字符可以匹配除换行符以外的任意一个字符。
+
+		自己定义原子表
+			[13579]   匹配奇数
+
+	元字符
+		*   	匹配0次 1次或多次
+		+      匹配1次或多次其前的原子
+		？    匹配0次或1次其前的原子  
+		|       匹配两个或多个分支选择
+		{n}   表示其前面的原子恰好出现n次
+		{n, } 表示其前面的原子出现不小于n次
+		{n, m}  表示其前面的原子至少出现n次，最多出现m次
+		 ^或\A   匹配输入字符串的开始位置(或在多行模式下行的开头)
+		 $或\Z   匹配输入结束位置
+		 \b      匹配单词的边界
+		 \B      匹配除单词边界以外的部分
+
+	修正符号
+		i     修正正则表达式不区分大小写
+		m   修正符号修正表达式可以视为多行
+		s     修正正则表达式中的 .  可以匹配换行符号
+		x     可以省略空白
+		w   
+
+	url 正则表达式
+		$grep = "/(https?|ftps?):\/\/(www|email|bbs|ftp)\.(.*?)\.(com|net|cn|org)/"
+	email 正则表达式
+		$grep = "/\w+([+-.]\w+)*@\w+([.-][\w+])*\.(com|net|cn|org)/i"
+
+分割  匹配  查找  替换
+	1.字符串处理函数(处理快 但一些做不到)
+		匹配
+			strstr
+				$str = "this is a test";
+				if(strstr($str, "test")){
+					echo "存在";
+				}else{
+					echo "不存在";
+				} //存在
+
+				echo strstr($str, "a"); //a test!
+				echo strstr($str, "a", true); // this is
+			strpos 
+				$str = "this is a test!";
+				if(strpos($str, "test")){
+					echo "存在";
+				}else{
+					echo "不存在";
+				} //存在
+
+				echo strpos($str, "a"); // 8
+ 
+			substr
+				$str = "this is a test!";
+				echo substr($str, 3);// s is a test!
+
+			获取文件名
+				function getFileName($url){
+					$loc = strrpos($url, "/")+1;
+					return substr($url, $loc);
+				}
+				echo getFileName("http://www.baidu.com/aaa/demo.php"); //demo.php
+				echo "<br>";
+				echo getFileName("../../loc/op/img/bg.png");//bg.png
+
+				echo basename("http://www.baidu.com/aaa/demo.php");
+
+		分割
+			explode implode() -- join()
+
+				$str = "this is a  test";
+				$a = explode( " ", $str);
+				print_r($a); //Array ( [0] => this [1] => is [2] => a [3] => [4] => test )
+
+		替换 str_replace()
+			$str = "http://www.lampbrother.net/php/demo.php";
+
+			$newstr = str_replace("php", "java", $str);
+			
+			echo $str."<br>"; //http://www.lampbrother.net/php/demo.php
+			echo $newstr; //http://www.lampbrother.net/java/demo.java
+			-------
+				$str = "http://www.lampbrother.net/php/demo.php";
+
+				$num = 0;
+				$newstr = str_replace("php", "java", $str, $num);
+
+				echo "替换的次数为{$num}";替换的次数为2
+
+			替换数组
+				//非法关键字有   正常 里面 显示
+				$str = "这是一句正常的句子，但里面有一些不能显示的文字";
+				$num = 0;
+				$newstr = str_replace(array("正常", "里面", "显示"), "**", $str, $num);
+
+				echo $str."<br>"; //这是一句正常的句子，但里面有一些不能显示的文字
+				echo $newstr."<br>"; //这是一句**的句子，但**有一些不能**的文字
+				echo "替换了{$num}次"; //替换了3次
+
+	2.正则处理函数(功能强大  但效率要低)
+		匹配
+			preg_match()  preg_match_all()  preg_grep()
+
+			$str = "this is 5 a 8 te 9st";
+			if(preg_match("/\d/", $str)){
+				echo "存在";
+			}else{
+				echo "不存在";
+			} //存在
+		分割
+			preg_split()
+				$str = "this is a  test";
+				print_r(preg_split("/[ae]/", $str));//Array ( [0] => this is [1] => t [2] => st )
+		正则替换  preg_replace()
+
+		其他正则函数
+			preg_replace_callback
+				$text = "今天是2014-02-04, 明年的2015-02-14是什么";
+				echo $text."<br>"; //今天是2014-02-04, 明年的2015-02-14是什么
+
+				$reg = "/(\d{4})(-\d{2})(-\d{2})/";
+
+				function myfun($m){
+					return ($m[1]+1).$m[2].$m[3];
+				}
+				echo preg_replace_callback($reg, "myfun", $text);//今天是2015-02-04, 明年的2016-02-14是什么
+	注意：如果可以直接使用字符串处理函数的字符串，就不要使用正则处理
+
+

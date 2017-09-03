@@ -1,0 +1,680 @@
+1.表单中get和post提交方方法的区别
+答：get是发送请求HTTP协议通过url参数传递进行接受，而post是实体数据，可以通过表单提交大量信息
+2.session与cookie的区别
+答：session：储存用户访问的全局唯一变量，储存在服务器上的php指定的目录中的(session_dir)的位置进行的存放cookie：用来储存连续访问一个页面时所使用，是储存在客户端，对于cookie来说是储存在用户win的Temp目录中的
+	两者都可以通过时间来设置时间长短
+3.数据库中的事物是什么
+	事物(transation)是作为一个单元的一组有序的数据操作。如果组中的所有操作都成功，则认为事物成功，即使只有一个操作失败，事物也不成功。如果所有操作完成，则事物成功，即使只有一个操作失败，事物也不成功。如果所有操作完成，事物则提交，其修改将作用于所有其他数据库进程。如果操作失败，则事物将回滚，该事物所有操作的影响都将取消
+简述题
+1.用php打印出前一天的时间格式是2006-5-10 22:21:21
+	echo date('Y-m-d H:i:s', strtotime('1-days'));
+2.echo print print_r的区别
+	echo 是php语句，print和print_r是函数，语句没有返回值，函数可以有返回值
+	print()   只能打印简单类型变量的值如(int, string)
+	print_r 可以打印复杂类型变量的值如(数组,对象)
+	echo 输出一个或多个字符串
+3.能够使HTML和PHP分开使用的模板
+	Smart,Dwoo,TinyButStrong,Template Life
+5.使用版本控制工具
+	svn git 
+6.如何实现字符串反转
+	strrev($str);
+7.优化MYSQL数据库的方法
+	1.选取最适合的字段属性，尽可能的减少定义字段长度，尽量把字段设置NOT NULL,例如省份 性别， 最好设置为ENUM
+	2.使用链接(join)来代替子查询
+		a.删除没有任何订单客户:DELETE FROM customerinfo WHERE customeird NOT in(SELECT customerid FORM orderinfo)
+		b.提取所有没有订单客户：SELECT FROM customerinfo WHERE customeid NOT in(SLECT customerid FROM orderinfo)
+		c.提高b的速度优化 SELECT FORM customerifon LEFT JOIN orderid customerinfo.customerid=ordeinfo.customerid WHERE orderinfo.customeird IS NULL
+	3.使用联合(UNION)来代替手动创建的临时表
+		a.创建临时表： SELECT name FROM 'nametest' UNION SELECT username FROM 'nametest2';
+	4.事物处理
+		a.保证数据完整性，例如添加和修改同时，两者成立则都执行，一者失败都失败
+		mysql_query("BEGIN");
+		mysql_query("INSERT INTO customerinfo (name) VALUES($name1)");
+		mysql_query("SELECT * FROM 'orderinfo" WHERE customerid=".$id);
+		mysql_query("COMMIT");
+	5.锁定表，优化事物处理
+		a.我们用一个SELECT语句取出初始数据，通过一些计算，用UPDATE语句将新值更新到表中，包含有WRITE关键字的LOCK TABLE语句可以保证在UNLOCK TABLES 命令被执行钱不会有其他的访问来对inventory进行插入 更新或者删除的操作
+			mysql_query("LOCK TABLE customerinfo READ, orderinfo WRITE");
+			mysql_query("SELECTcustomerid FROM 'customerinfo' WHERE id =" .$id) ;
+			mysql_query("UPDATE 'orderinfo" SET ordertitle = '$title' where customerid=".$id);
+			mysql_query("UNLOCK TABLES")
+	6.使用外见 优化锁定表
+		a.把customerinfo里的customerid映射的到orderinfo里的customerid,任何一条没有合法customerid的记录都不会写到orderifo里
+		CREATE TABLE customerinfo(
+			customerid INT NOT NULL,
+			PRIMARY KEY(customerid)
+		)TYPE = INNODB;
+		CREATE TABLE orderinfo(
+			orderid INT NOT NULL,
+			customerid INT NOT NULL,
+			PRIMARY KEY(customerid, orderid),
+			FOREIGN KEY(customerid) PEFERENCES customerinfo (customerid) ON DELETE CASCADE
+		)TYPE=INNODB;
+
+		注意：ON DELECT CASECADE 该参数保证当customerinfo表中的一条记录删的话同时也会删除order表中的该用户所有记录，注意使用外键要定义事物安全类型为INNODB
+	7.建立索引
+	8.优化查询语句
+		a.最好在相同字段进行比较操作，建立好的索引字段上尽量减少函数操作
+			例子：
+				SELECT * FROM order WHERE YEAR(orderDate)<2008;(慢)
+				SELECT * FROM order WHERE orderDate<"2008-01-01";(快)
+			例子
+				SELECT * FROM order WHERE addtime/7<24;(慢)
+				SELECT * FROM orde WHERE addtime < 24*7;
+8.php的意思
+	php是一个基于服务端来创建动态网站的脚本语言，您可以用PHP和HTML生成网站主页
+9.MYSQL取得当前时间的函数是？格式化日期的函数是
+	now(), date();
+10.实现中文字符串截取无乱码的方法
+	function GBsubstr($string, $start, $length){
+		if(strlen($string) > $length){
+			$str = null;
+			$len = $start + $length;
+			for($i=$start;$i<$len; $i++){
+				if(ord(substr($string, $i, 1))>0xa0){
+					$str .= substr($string, $i, 2);
+					$i++;
+				}else{
+					$str .= substr($string, $i, 1);
+				}
+			}
+			return $str;
+		}else{
+			return $string;
+		}
+	}
+12.您是否用过模板引擎，如果有您用的模板引擎的名字是
+	smart
+14.对于大流量的网站，您采用什么样的方法来解决访问量问题
+	确认服务器硬件是否足够支持当前的流量，数据库读写分离，优化数据表
+	程序功能规则，禁止外部的盗链控制文件的下载，使用不同主机分流主要流量
+15.使用PHP写出显示客户端IP与服务器IP的代码
+	客户端IP echo $_SERVER['REMOTE_ADDR'];或者：getenv('REMOT_ADDR');
+	服务器IP echo gethostname("www.baidu.com")
+17.如何修改SESSION的生存时间
+	方法1.将php.ini中的session.gc_maxlifetime设置为9999重启nginx
+	方法2.$savePath = "./session_save_dir/";
+		   $fileTime = 小时*秒
+		   session_save_path($savePath)
+		   session_set_cookie_params($lifeTime)
+		   session_start();
+	方法3:setcookie() and session_set_cookie_params($lifeTime);
+18.有一个网页地址，比如php开发资源网主页：http://www.phpres.com/index.html，如何得到它的内容
+	方法1.
+		$readcontents = fopen("http://www.phpres.com/index", "rb");
+		$contents = stream_get_contents($readcontents);
+		fclose($readcontents);
+		echo $contents;
+	方法2
+		echo file_get_contents("http://www.phpres.com/index.html");
+19.在HTTP 1.0中状态码401的含义是？如果返回"找不的文件"的提示，则可用header函数，语句
+	401代表未授权;header("location:www.xxx.php");
+12.在PHP中，heredoc是一种特殊的字符串，它的结束标志必须是
+	heredoc的语法是"<<<"加上自己定义成对的标签，在标签范围内的文字视为一个字符串
+	$str = <<< SHOW
+	my name is xiao ma
+	SHOW;
+13.谈谈asp,php,jsp的优缺点
+	asp全名是Active Server Pages,是一个WEB服务器端的开发环境，利用它可以产生和运行动态的 交互的 高性能的WEB服务应用程序，ASP采用脚本语言VB script(java script) 作为自己的开发语言
+	php是一种跨平台的服务器端嵌入式脚本语言。它大量地借用C Java和Perl语言的语法，并耦合PHP自己的着特性，使用WEB开发能够快速地写出动态生成页面，它支持目前绝大多数数据库，还有一点php完全免费的，不用花钱
+14.谈谈对mvc的认识
+	有模型控制器试图完成的应用程序
+	有模型发出要实现的功能到控制器，控制器接收组织传递给视图
+15.写出发帖数最多的10个人名字的SQL，利用下表：members(id,username,posts,pass,email)
+	SELECT * FROM 'members' ORDER BY posts DESC limit 0,10;
+16.说明php中传值与传引用的区别。什么时候传值什么时候传引用
+	按值传递：函数范围内对值的任何区改变在函数外部都会被忽略
+	按引用传：函数范围内对值的任何改变在函数外部也能反映出这些修改
+	优缺点：按值传递时，php必须复制值，特别是对于大型字符串和对象里说，这将会是一个代价很大的操作
+	按引用传递则不需要复制值，对于性能提高很有好处
+17.在php中error_reporting这个函数有什么作用
+	设置错误级别与错误信息
+18.写一个函数验证电子邮箱的格式是否正确
+	function checkEmail($email){
+		$reg = "/\w+([+-.]\w+)*@\w+([.-][\w+])*\.(com|net|cn|org)/i";
+		return preg_match($reg, $email)
+	}
+19.简述如何的到当前执行脚本路径，包括所得参数
+	$scrpti_name = basename(__FILE__); 
+21.js表单弹出对话框函数是?获得输入焦点函数
+	弹出对话框 alert() confirm() prompt()
+	获得输入焦点focus()
+22.js的转向函数是？怎么引入一个外部js文件
+	reverse
+	<script scr="../js/open.js" type="text/javascript"></script>
+23.foo()和@foo()之间有什么区别
+	@foo()不会输出任何错误信息
+24.如何声明一个名为"myclass"的没有方法和属性的类
+	cass myclass{}
+25.如何实力化一个名为"myclass"的对象
+	new myclass();
+26.你如何访问和设置一个类的属性
+	$obj  = new myclass();
+	$newstr = $obj->name;
+	$obj->test = "info";
+27.mysql_fetch_row()和my_fetch_array()之间什么区别
+	mysql_fetch_row是从结果集取出1行数组作为枚举
+	mysql_fetch_array()是从结果集取出一行数组作为关联数组或数字数组
+28.GD库是做什么的
+	gd提供了一系列用来处理图片的API,使用GD库可以处理图片，或者生成图片
+	在网站上GD库通常用来生成所略图或者用来对图片加水印或者对网站数据生成报表
+29.指出一些在PHP输入一段HTML代码的办法
+	echo "<a href='index.php'>aaa</a>";
+
+30.下面哪个函数可以打开一个文件，以对文件进行读和写操作
+	 a.fget    b.file       c.fopen       d.open_file      [c]
+31.下列哪个选项没有将join添加到users数组中
+	a)$user[] = 'join'
+	b) array_add($userrs, 'join')
+	c) array_push($users, 'join');
+	d) $users ||= 'join'
+
+	[b d]
+33.使用php写一段简单查询，查处所有姓名为"张三"的内容并打印出来
+	表名User
+	Name      Tel        Content        Date
+	张三        123123     大专           2991
+	张三         123123     本科        221
+	张刘      232323        中专      2232
+	请根据上面的题目完成代码
+	$mysql_db = mysql_connect("local", 'root', 'pass')
+	@mysql_select_db('db', $mysql_db)
+		$result = mysql_query("SELECT * FROM 'user' WHERE name='张三'")
+		while($res = mysql_fetch_array($result)){
+			echo $res['tel'].$res['content']
+		}
+34.如何使用下面的类，并解释下面什么意思
+	class test{
+		function Get_test($num){
+			$num = md5(md5($num)."En")
+			return $num
+		}
+	}
+
+	$test = new test();
+	echo $test->Get_test(1002);
+	类test里面包含Get_test方法，实例化类调用方法多字符串加密
+35.写出SQL语句的格式：插入 更新 删除
+	表名User
+	Name      Tel        Content        Date
+	张三        123123     大专           2991
+	张三         123123     本科        221
+	张刘      232323        中专      2232
+	a)有一新记录(小王 1231231 高中毕业 2004)请用SQL语句新增至表中
+		INSERT INTO 'user' (name, tel, content , Date) VALUES("小王 ", '1231231', '高中毕业', '2004')
+	b)请用sql语句把张三的时间更新为当前系统时间
+		$nowDate = date("Ymd")
+		UPDATE 'user' SET data = $nowDate WHERE name  = '张三'
+	c)请写出删除名为张四的全部记录
+		DELETE FROM user WHER name='张死'
+36.写出数据类型(int, char, varchar, datetime , text)的意思请问varchar和char的区别
+	int是数字类型，char是固定长度字符串， varchar实际长度字符串， datetime日期时间 ， text文本字符串
+	char的场地固定为创建表设置的长度，varchar为可变长度的字符
+38.写出一下程序的输出结果
+	$b = 201;
+	$c = 40
+	$a = $b>$c?4:5
+	echo $a; //4
+39.检测一个变量是否有设置的函数是否？是否为空的函数
+	isset($str), empty($str)
+40.取得查询结果集总数的函数是
+	mysql_num_rows($result)
+41.$arr = array('james', 'tom', 'symfony');打印地一个元素的值
+	echo $arr[0]
+42.将41题的数组的值用','号分割并合并成字符串
+	$str = implode(",", $arr);
+43.$a = 'abcdef';请取出$a的值并打印出地一个字母
+	echo $a{0}
+44.php可以和sql server/oracle等数据库链接吗
+	当然可以
+45.请写出php权限控制修饰符
+	public private protected
+46.请写出php5的构造函数和稀够函数
+	__construct __destruct 
+47.完成一下
+	一.创建新闻发布系统，表名为message有如下字段
+		id 文章Id
+		title 文章标题
+		content  文章内容
+		category_id  文章分类
+		hits 点击量
+		答CREATE TABLE 'message'(
+			'id' int(10) NOT NULL AUTO_INCREMENT,
+			'title' varchar(200) default NULL,
+			'content' text,
+			'category_id' int(10) NOT NULl,
+			'hit' int(20),
+			PRIMAY KEY('id')
+		)ENGINE=InnoDB DEFAULT CHARSET=utf-8l
+	二.同样上述新闻发布系统：表comment记录用户回复内容，字段如下
+		comment_id 回复id
+		id文章id, 关联message表中的id
+		comment_content回复内容
+		现通过查询 数据库需要得到以下格式的文章标题列表，并按照回复数量排序，回复最高的排在最前面
+		文章id 文章标题 点击量 回复数量
+		用一个SQL语句完成上述查询，如果文章没有回复则回复数显示为0
+		答 SELECT message_id, id, mesage, title, IF(message, 'hits' IS NULL, 0, message, 'hits')hits, IF(comment, 'id' IS NULL, 0, count(*)) number FROM message LEFT JOIN commetn ON message.id=comment.id GROUP BY message.'id'
+
+	三.上述内容管理系统，表category保持分类信息，字段如下
+		category_id int(4) not null auto_increment;
+		category_name varchar(40) not null,
+		用户输入文章时，通过选择下拉菜单选定文章分类
+		写出如何喜欢实现这个下拉菜单
+
+		答：function categoryList(){
+			$results = mysql_query('select category_id, category_name from category') or die('Invalid query'. mysql_erroy());
+			print("<select name='category' value=''>");
+			while($rowArray=mysql_fetch_array($results)){
+				print("<option value=".$rowArray['category_id'].">".$rowArray['category_name']."</option>")
+			}
+			print("</select>")
+		}
+1.写一个函数，尽可能高校的，从一个标准url里取出文件的扩展名
+	例如：http://www.sina.com.cn/adb/de/fg.php?id=1需要取出php或.php
+	function getName($url){
+		$arr = parse_url($url)
+		$file = basename($arr['path']);
+		$name = array_pop(explode(".", $file))
+		return $name;
+	}
+
+2.在HTML语言中，页面头部的meta标记可以用来输出文件的编码格式，以下是一个标准的meta语句请使用php语言写一个函数，把一个标准HTML页面中类似meta标记中的charset部分改为big5请注意
+	1.需要处理完整的html页面，即不光此meta语句
+	2.忽略大小写
+	3. '和"在此处是可以互换的
+	4.'Content-type'两侧的引号是可以忽略的但'text/html;charset=gbk'两侧不行
+	5.注意处理多余空格
+
+3.写一个函数，算出两个文件的相对路径
+	如$a = '/a/b/c/d/e.php'; $b = '/a/b/13/24/c.php';计算出$b相对于$a的相对路径应该是../../c/d
+	function getPath($a, $b){
+		$path = "";
+		$a = explode("/", trim(dirname($a), "/"));
+		$b = explode("/", trim(dirname($b), "/"));
+		$len = max(count($a), count($b));
+		for($i=0;$i<$len;$i++){
+			if($a[$i] == $b[$i]){
+				unset($a[$i]);
+				unset($b[$i]);
+			}else{
+				break;
+			}
+		}
+		$path = str_repeat("../", count($b)).implode("/", $a);
+		return $path;
+	}
+
+	echo getPath($a, $b);
+	$a = '/a/b/c/d/e.php';
+	 $b = '/a/b/13/24/c.php';
+1.在php中，当前脚本的名称(不包括路径和查询字符串)记录在与定义变量 __  S_SERVER['PHP_SELF']__中;而链接到当前页面的URL记录在与定义变量__$_SERVER['HTTP_REFERER']__
+2.执行 程序段 <?php echo 8%(-2) ?> 将输出   0
+4.数组函数arsort的作用是   对数组进行逆向排序并保留索引关系   error_reporting(2047)的作用是__报告所有错误和警告__
+
+6.写出一个正则表达式，过滤网页上的所有js/vbs脚本(即把script标记及其内容去掉) preg_replace("/<script[^>].*?>.*?</script>/si", "newinfo", $script);
+
+7.以Apache模块的安装php,在文件http.conf中首先要用语句__动态装载php模块，然后在用语句__使得Apache把所有扩展名为php的文件都作为php脚本处理
+	LoadModules php5_module 'c:/php/php5apache2.dll'    AddType application/x-httpd-php .php
+
+1.抓取远程图片到本地，你会用什么函数
+	fsockopen,A
+2.用最少的代码写一个求3值最大的函数
+	function($a, $b, $c){
+		return $a>$b? ($a>$c ? $a : $c) : ($b>$c ? $b : $c);
+	}
+3.用php打印出前一天时间，打印格式是2007年5月10日22:21:21
+	echo date("Y-m-d H:i:s", strtotime('-1 day'));
+4.javascript 能否定义二维数组，如果不能你如何解决
+	javascript不支持二维数组，可以用 arr[0] = new array()来解决
+5.假设a.html和b.html在同一个文件夹下面，用javascript实现当打开a.html五秒中后自动那个跳转到b.html
+	<script>
+		function go2b(){
+			window.location = 'b.html';
+			window.close();
+		}
+		setTimeout("go2b()", 5000);
+	</script>
+
+6. 在浏览器当前页面用户的IP地址127.0.0.1
+	echo $_SERVER['REMOTE_ADDR']
+	查询(query)字符串(url中地一个问号？之后的内容):id=1&bi=2
+	echo $_SERVER['QUERY_STRING']
+	当前运行脚本所在的文档跟目录： d:inetpubwwwroot
+	echo $_SERVER["DOCUMENT_ROOT"]
+7.在http 1.0中 , 状态码 401含义？ 如果返回"找不的文件"的提示则和用header函数，其语句为header("HTTP/1.0 404 Not Found");
+	401表示未授权
+8.写一个函数，能遍历一个文件夹下的所有的文件和子文件
+	function my_scandir($dir){
+		$file = array();
+		if(is_dir($dir)){
+			if($handle = opendir($dir)){
+				while($file = readdir($handle) !== false){
+					if($file != '.' && $file != '.'){
+						if(is_dir($dir.'/'.$file)){
+							$file[$file] = my_scandir($dir."/".$file);
+						}else{
+							$file[] = $dir."/".$file;
+						}
+					}
+				}
+
+				closedir($handle);
+				return $files;
+			}
+
+
+		}
+	}
+
+10.在php中error_reporting这个函数有什么作用
+	error_reporting()设置PHP的报错级别并返回当前级别
+18.  判断
+	$str1 = null
+	$str2 = false
+	echo $str1 == $str2 ? '相等' : '不相等'; //相等
+	$str3 = '';
+	$str4 = 0;
+	echo $str3 == $str4 ? '相等' : '不相等'//相等
+	$str5 = 0;
+	$str6 = '0';
+	echo  $str5 === $str6 ? '相等' : '不相等'//不相等
+19.mysql数据库中的字段类型varchar和char的主要区别是什么？哪种字段的查找效率要高，为什么
+	varchar 是变长，节省储存空间, char是固定长度。查找效率要char型快，因为varchar是非定长，必须查找长度，然后进行数据的提取，比char定长类型多了一个步骤，所以效率低一些
+20.请使用javascript写出三个产生一个image标签的方法(提示：从方法 对象 HTML角度考虑)
+	1)var img = new Image()
+	2)var img = document.createElementById('image')
+	3)img.innerHTML = "<img src='xx.jgp'>"
+21.请描述亮点以上XHTML和HTML最显著的区别
+	1）XHTML必须强制制定文档类型DocType, HTML不需要
+	2）XHTML所有标签必须闭合，HTML比较随意
+23.写出三种以上MYSql数据库储存引擎的名称(提示:不区分大小写)
+	MyISAM InnoDB BDB Merge Memory example Federate CSV Archive Blackhole MaxDB
+24.求两个日期的差数，例如2007-2-5到2007-3-6的日期差数
+	方法一
+		function getday($date1, $date2){
+			$time1 = strtotime($date1);
+			$time2 = strtotime($date2)
+			return ($time2 - $time)/(60*60*24);
+		}
+	方法二
+		echo abs(strtotime("2007-2-1")-strtotime("2007-3-1"))/60/60/24
+25.写一个函数，实现一下功能
+	字符串"open_door"转换成"OpenDoor"  "make_by_id"转换成"MakeById"
+	function strev($str){
+		$str_arr = explode("_", $str);
+		$str_implode = implode(" ", $str_arr);
+		$str_implode = implode("", explode(" ", ucwords($str_implode)));
+		return $str_implode
+	}
+	方法二
+		$str = explode("_", $str);
+		for($i=0;$i<count($str);$i++){
+			echo ucwords($str[i])
+		}
+
+		方法三
+			echo str_replace(' ','',ucwords(str_replace('_',' ','open_door')));
+27.js中网页前进和后退的代码(前进：history.forward();=history.go(1));后退：history.back(); == history.go(-1);
+28. echo count("abc");// 1
+29.有一个一维数组，里面储存整形数据，请写一个函数，将他们按从大到小的顺序排序
+	要求执行效率高。并说明如何改善执行效率(该函数必须自己实现，不能使用php函数)
+	function mysort($arr){
+		if(!is_array($arr) || empty($arr))
+			return array();
+		//获取数组的长度
+		$len = count($arr);
+		//如果数组中只有一个元素，直接返回这个数组
+		if($len<=1)
+			return $arr;
+		$key[0] = $arr[0];
+		$left = array();
+		$right = array();
+		$len = count($arr);
+		for($i=1;$i<$len;$i++){
+			if($key[0]>$arr[$i]){
+				$left[] = $arr[$i];
+			}else{
+				$right[] = $arr[$i];
+			}
+		}
+
+		$left = mysort($left);
+		$right = mysort($right);
+		$nstr = array_merge($left, $key, $right);
+
+		return $nstr;
+
+
+	}
+	$arr = array(10,1,3,2,5,25,3);
+	print_r(mysort($arr));
+30.请列举说明在你开发过程中用什么方法来加快页面的加载速度
+	答：要用到服务器资源时才打开，及时关闭服务器资源，数据库添加索引，页面可生成静态，图片等大文件单独服务器。
+32.
+	$a1 = null;
+
+	$a2 = false;
+
+	$a3 = 0;
+
+	$a4 = '';
+
+	$a5 = '0';
+
+	$a6 = 'null';
+
+	$a7 = array();
+
+	$a8 = array(array());
+
+	echo empty($a1) ? 'true' : 'false'; //true
+	echo "<br>";
+	echo empty($a2) ? 'true' : 'false';//true
+	echo "<br>";
+	echo empty($a3) ? 'true' : 'false';//true
+	echo "<br>";
+	echo empty($a4) ? 'true' : 'false';//true
+	echo "<br>";
+	echo empty($a5) ? 'true' : 'false';//true
+	echo "<br>";
+	echo empty($a6) ? 'true' : 'false';//false
+	echo "<br>";
+	echo empty($a7) ? 'true' : 'false';//true
+	echo "<br>";
+	echo empty($a8) ? 'true' : 'false';//false
+
+3.写出一下程序的输出结果
+	3. 写出如下程序的输出结果
+
+	<?
+
+	$test = 'aaaaaa';
+
+	$abc = & $test;
+
+	unset($test);
+
+	echo $abc;// aaaaaa
+	4. 写出如下程序的输出结果
+
+	<?$count = 5;
+
+	function get_count(){
+
+	static $count = 0;
+
+	return $count++;
+
+	}
+
+	echo $count;//5
+
+	++$count;
+
+	echo get_count();//0
+
+	echo get_count();//1
+
+	?>
+5. 写出如下程序的输出结果
+
+	<?
+
+	$GLOBALS['var1'] = 5;
+
+	$var2 = 1;
+
+	function get_value(){
+
+	global $var2;
+
+	$var1 = 0;
+
+	return $var2++;
+
+	}
+
+	get_value();
+
+	echo $var1;//5
+
+	echo $var2;//2
+
+	?>
+
+1.有个人想上一个50级的台阶，每次只能迈1级或者迈2级台阶，问：这个人有多少种方法可以把台阶走完？例如：总共3级台阶，可以先迈1级再迈2级，或者先迈2级再迈1级，或者迈3次1级总共3中方式。
+	function ds($n){
+		$bf_1 = 2;
+		$bf_2 = 1;
+		if($n == 1){
+			return $bf_2;
+		}elseif($n ==2){
+			return $bf_1;
+		}
+		for($i=3;$i<=$n;++$i){
+			$count = $bf_1 + $bf_2;
+			$bf_2 = $bf_1;
+			$bf_1 = $count;
+		}
+		return $count;
+	}
+
+	echo ds(4);
+1.HTTP协议中几个状态码的含义：503 500 401 403 404 200 301 302
+	答案
+		503(服务器不可用) 服务器目前无法使用(由于超载或停机维护)。通常，这只是暂时状态
+		500(服务器内部错误) 服务器遇到错误，无法完成请求
+		401(未授权) 请求要求身份验证，对于需要登录的网页，服务器可能返回此相应
+		403(禁止) 服务器拒绝请求
+		404(未找到) 服务器找不的请求的网页
+		200(成功)服务器已经成功处理了请求。通常，这表示服务器提供了请求的网页
+		301(永久移动) 请求的网页已经用觉移动到新位置。服务器返回此相应(对GET或HEAD请求的相应)时，会自动将请求着转到新位置
+		302(临时移动) 服务器目前从不同位置的网页相应请求，但请求者应继续使用原有位置来进行以后的请求
+
+4.mysql的储存引擎myisam和innodb的区别
+	InnoDB和MyISAM是许多人在使用MYSQL时最常用的两个表类型，这两个表类型各有优劣，视具体应用而定。基本的差别为：MYISAM类型不支持事物处理等高等处理，而InnoDB类型支持。MYISAM类型的表强调的是性能，其执行数度比InnoDB类型更快，但是不提供事物支持
+5.用php打印前一天的时间格式是2006-5-10 22：21：21
+	echo date("Y-m-d H:i:s",time()-3600*24);
+	echo "<br>";
+	echo date("Y-m-d H:i:s", strtotime('-1 day'));
+6.如何用PHP的环境变量得到一个网页地址的内容？IP地址又要怎样获得
+	"https://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']; //获得网页地址
+	$_SERVER['REMOTE_ADDRE']
+
+1.请用最简单的语言告诉我什么是php
+	php全程Hypertext Preprocessor,是一种用来开发动态网站的服务器脚本语言
+2.什么是MVC
+	MVC有model,view,controller组成，php mvc可以更高校地管理好3个不同层的php代码
+ 	model:数据信息储存层
+ 	view:负责将应用的数据以特定的方式展现在界面上
+ 	Controller通常控制器负责从视图读取数据，控制用户输入，并向模型发送数据
+ 3.在页面中有几种引用css方法
+ 	1.引用外部css
+ 	2.内部定义style样式
+ 	3.内联样式
+ 4.php支持多继承吗
+ 	不支持，php类只能继承一个父类，并用关键字"extends"标识
+ 5.php中echo和print有什么区别
+ 	这两个看起来相似，因为他们都是将一些值打印在屏幕上，但是echo和print的本质区别在于：echo用来输出字符串，显示多个值的时候用都好隔开。只支持基本类型，print不仅可以打印字符串值，而且可以打印函数的返回值
+ 6.请问get和post方法有什么区别
+ 	我们在网页上填写的表单信息都可以通过这两个方法将数据传递到服务器上，当我们使用GET方法是，所有信息都会出现在url地址中，并且使用GET方法最多只能传递1024个字节，所以如果在传输量小好或者安全性不是那么重要的情况下可以使用GET方法。说道POSt方法，最多可以传输2M字节的数据，而且可以根据需要调节
+ 7.php中获取图像尺寸大小的方法是什么？
+ 	getimagesize()获取图片的尺寸
+ 	Imagesx()  获取图片的宽带
+ 	Imagesy()  获取图片的高度
+ 8.php中的PEAR是什么
+ 	PEAR也就是为php扩展与应用库(PHP Extension and Application Repository) 它是一个php扩展及应用的一个ie代码仓库
+ 9.如何用PHP和mysql上传视频
+ 	我们可以在数据库中存放视频的地址，而不需要将真正的视频数据存在数据库中。可以将视频数据库存放在服务器的制定文件夹下，上传的默认大小是2MB,但是我们也可以在php.ini文件中修改max_file_size选项来改变
+10.PHP的错误类型有那些
+	php中遇到的错误类型大致有3类
+	提示：这都是一些非常正常的信息，而非重大的错误，有些甚至不会展示给用户。比如访问不存在的变量
+	警告：这是有点严重的错误，将会把信息展示给用户，但不会影响代码的输出，比如包含一些不存在的文件
+	错误：这是真正的严重错误，比如访问不存在的php类
+11.如何在php中定义常量
+	php中使用Define() 来定义常量
+	define('HEMD', 30);
+12.如何不使用submit按钮来提交表单
+	我们不想用submit按钮来提交表单，我们也可以用超链接提交，代码：
+	<a href="javascript:document.myform.submit();">Submit Me</a>
+1.能使HTML和php分离开使用的模板
+	smart phplib
+2.php中过滤HTML的函数是什么？经常用在什么地方
+	strip_tags()
+	strip_tags()函数去除字符串中的HTML XML以及php的标签
+3.谈一谈PHP开源框架CI,Thinkphp,laravel的优缺点以及选型已经
+	CI非常轻量级，是一个简单的mvc框架，性能也很快
+	Thinkphp国内使用比较多，有点是文档非常多，各种问题解决方案比较多，缺点是代码不够规范，理念落后
+	laravel是一个现代化的php开发框架，代码优雅，使用 composer 方式扩展功能，社区活跃，缺点是比较重，比较适合做后台管理或者应用型WEB系统
+4.什么是CGI?什么是FastCGI?php-fpm, FastCGI,Nginx之间是什么关系
+	CGI,通过网关接口，用于WEB服务器和应用程序间的交互，定义输入输出规范，用户的请求通过WEB服务器转发给FastCGI进程，FastCGI进程再调用应用程序进行处理，如php解析器，应用程序的处理结果如html返回给FastCGI,FastCGI返回给Nginx进行输出。假设这里WEB服务器是Nginx,应用程序是php,而php-fpm是管理FastCGI的，这也就是php-fpm,FastCGI和Nginx之间的关系
+	FastCGI用来提高CGI程序性能，启动一个master,在启动多个worker，不需要每次解析php.ini而php-fpm实现了FastCGI协议，是FastCGI的进程管理器，支持平滑重启，可以启动的时候预先生成多个进程。
+1.form表单enctype属性值的的理解
+	form表单的enctype属性的两个常见取值：application/x-www-form-urlencoded   multipart/form-data,这两个属性的区别是什么？为什么在multipart/form-data的时候，必须用post请求？这一系列的问题，也是我们php程序员在面试的时候经常被问及的问题
+2.curl与memcahed redis
+	因为在项目中，经常需要使用第三方接口完成一些功能，比如发短信，获取天气，获取物流信息等，所以能够熟练使用curl扩展库是将长问及的面试提，同时，在php中经常借助memcached和redis这两个扩展来优化应用的性能，所以会这两个基本扩展的使用，也是升程序员面试时经常被问及的问题
+3.常见的sql语句
+	php主要用于WEB编程，所以会常用的CURD操作是每个php程序员必须会的，尤其要会一写简单的表链语句等，所以在php程序员面试的时候，总会伴随让你用某个sql语句查询某个条件数据的面试题
+
+1.mysql数据库事务的4大特性
+	1.原子性
+		事务中包含的程序作为数据库的逻辑工作单位，它对数据库中的数据进行操作时，要么全部执行，要么都不执行
+	2.一致性
+		一个事务执行前和执行后，数据库都必须要处于一致性的状态
+	3.分离性
+		分离性是指在并发的事务是相互隔离的。即一个事务的内部操作及正在操作的数据必须被封锁起来，不会被其他的食物来企图修改
+		举例：假如你给小A打钱过去，同时小B也在给小A打钱。这时候数据库服务器中要么会让你的事务先执行，或者让小b的事务先执行。不存在你两的打钱动作会同时来修改小A卡里的金额
+	4.持久性
+		持久性是指当前数据库系统出现故障了，要确保已经提交的事务的更新是不会丢失的，即数据库中的数据的修改是永久性的。就算系统出现了故障，我们也可以使用数据库的备份和恢复来保证数据的修改
+二.mysql索引的种类
+	1.普通索引
+	2.唯一索引
+	3.主键索引
+	4.组合索引
+3.mysql建立索引的时机
+	到这里我们已经学会了建立索引，那么我们需要在什么情况下建立索引呢？一般来说在where和join中出现的列需要建立索引，但也不完全如此，因为mysql只对< ,<=, =, >, >=, BETWEEN, IN,以及某些时候的LIKE才会使用索引，以通配符%和_开头做查询时，mysql不会使用索引例如下句会使用索引
+		SELECT * FROM mytable WHERE username like 'admin%'
+	而下句就不会使用
+		SELECT * FROM mytable WHERE name like '%admin'
+4.索引的不足指出
+	上面都在说使用索引的好处，但过多的是使用索引将会造成滥用。因此索引也会有它的缺点
+	1.所然索引大大提高了查询速度，同时却会降低更新表的速度，如对表进行INSERT UPDATE和DELETE.因为更新表时，mysql不仅要保存数据，还要保存一下索引文件。
+	2.建立索引会占用磁盘空间的索引文件。一般情况下这个问题不太严重，但如果你在一个大表上创建了多种组合索引，索引文件的会膨胀很快
+	索引只是提高效率的一个因素，如果你的mysql有大数据量的表，就需要花时间研究建立最优秀的索引，或优化查询语句
+5.使用索引的注意事项
+	使用索引时，有以下一些技巧和注意事项
+	1.索引不会包含NULL的值的列
+	只要列中包含有NULL值都将不会被包含在索引中，符合索引中只要有一列含有NULL值，那么这一列对于此符合索引就是无效的。所以我们在数据库设计时不要让在段的默认值为NULL.
+	2.使用短索引
+	对串列进行索引，如果可能应该指定一个前缀长度。例如如果有一个CHAR(255)的列，如果在前10个或20个字符内，多数值是唯一的，那么就不要对整个列进行索引。段索引不仅可以提高查询速度而且可以节省磁盘空间和I/O操作
+	3.索引列排序
+	mysql查询只使用一个索引，因此如果where子句中已经使用了索引的话，那么order by中的列是不会使用索引的。因此数据库默认排序可以符合要求的情况下不要使用排序操作;尽量不要包含多个列的排序，如果需要最好给这些列创建符合索引
+	4.like语句操作
+	一般情况下不鼓励使用like操作，如果非使用不可，如何使用也是一个问题。like "%aaa%"不会使用索引而like "aaa%"可以使用索引
+	5.不要在列上进进行运算
+	代码如下
+		SELECT * FROM users WHERE YEAR(adddate)<2007;
+	将在每个行上进行运算，这将导致索引失效而进行全表扫描，因此我们可以改成代码如下：
+		SELECT * FROM users WHERE adddate < '2017-01-01';
+	6.不使用NOT IN 和 <>操作
